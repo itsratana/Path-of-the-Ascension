@@ -8,6 +8,7 @@ public class PlayerMovement : MonoBehaviour
 {
 [Header("Movement")]
     [SerializeField][Range(1,20)] private float walkSpeed;
+    private float sprintMultiplier = 1.5f;
 
     [Header("Jump")]
     [SerializeField] private float jumpForce;
@@ -19,12 +20,13 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float climbSpeed;
     private float verticalInput;
     public bool inClimbingState = false;
+    private bool canRotate = true;
 
+    [Header("Component")]
     private CharacterController characterController;
     private InputHandler inputHandler;
     private float horizontalInput;
     private Vector3 currentMovement;
-    [SerializeField]private bool canRotate = true;
 
     private void Start() 
     {
@@ -49,6 +51,7 @@ public class PlayerMovement : MonoBehaviour
         {
             isClimbing = !isClimbing;
             canRotate = !canRotate;
+            currentMovement.y = jumpForce;
         }
     }
 
@@ -59,9 +62,13 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleMovement() 
     {
+        float speed = walkSpeed * (inputHandler.SprintValue > 0 ? sprintMultiplier : 1f);
+
         horizontalInput = inputHandler.MoveInput.x;
         Vector3 moveDirection = new Vector3(horizontalInput, 0f, 0f);
-        currentMovement.x = moveDirection.x * walkSpeed;
+        moveDirection.Normalize();
+
+        currentMovement.x = moveDirection.x * speed;
 
         if (!characterController.isGrounded)
         {

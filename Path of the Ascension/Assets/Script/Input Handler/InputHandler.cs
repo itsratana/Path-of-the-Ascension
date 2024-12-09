@@ -16,14 +16,17 @@ public class InputHandler : MonoBehaviour
     [SerializeField] private string move = "Move";
     [SerializeField] private string jump = "Jump";
     [SerializeField] private string climb = "Climb";
+    [SerializeField] private string sprint = "Sprint";
     public event Action OnJumpAction;
 
     private InputAction moveAction;
     private InputAction jumpAction;
     private InputAction climbAction;
+    private InputAction sprintAction;
 
     public Vector2 MoveInput { get; private set; }
     public Vector2 ClimbInput { get; private set; }
+    public float SprintValue {get; private set;}
 
     public static InputHandler Instance { get; private set; }
 
@@ -42,6 +45,7 @@ public class InputHandler : MonoBehaviour
         moveAction = playerControl.FindActionMap(actionMapName).FindAction(move);
         jumpAction = playerControl.FindActionMap(actionMapName).FindAction(jump);
         climbAction = playerControl.FindActionMap(actionMapName).FindAction(climb);
+        sprintAction = playerControl.FindActionMap(actionMapName).FindAction(sprint);
         RegisterInputAction();
     }
 
@@ -54,6 +58,9 @@ public class InputHandler : MonoBehaviour
 
         climbAction.performed += context => ClimbInput = context.ReadValue<Vector2>();
         climbAction.canceled += context => ClimbInput = Vector2.zero;
+
+        sprintAction.performed += context => SprintValue = context.ReadValue<float>();
+        sprintAction.canceled += context => SprintValue = 0f;
     }
 
     private void OnEnable()
@@ -61,6 +68,7 @@ public class InputHandler : MonoBehaviour
         moveAction.Enable();
         jumpAction.Enable();
         climbAction.Enable();
+        sprintAction.Enable();
     }
 
     private void OnDisable()
@@ -68,5 +76,6 @@ public class InputHandler : MonoBehaviour
         moveAction.Disable();
         jumpAction.Disable();
         climbAction.Disable();
+        sprintAction.Disable();
     }
 }
