@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerInputHandler : MonoBehaviour
+public class InputHandler : MonoBehaviour
 {
     [Header("Input Action Asset")]
     [SerializeField] private InputActionAsset playerControl;
@@ -25,7 +25,7 @@ public class PlayerInputHandler : MonoBehaviour
     public Vector2 MoveInput { get; private set; }
     public Vector2 ClimbInput { get; private set; }
 
-    public static PlayerInputHandler Instance { get; private set; }
+    public static InputHandler Instance { get; private set; }
 
     void Awake()
     {
@@ -50,7 +50,7 @@ public class PlayerInputHandler : MonoBehaviour
         moveAction.performed += context => MoveInput = context.ReadValue<Vector2>();
         moveAction.canceled += context => MoveInput = Vector2.zero;
 
-        jumpAction.performed += context => OnJumpAction?.Invoke();        ;
+        jumpAction.performed += context => OnJumpAction?.Invoke();        
 
         climbAction.performed += context => ClimbInput = context.ReadValue<Vector2>();
         climbAction.canceled += context => ClimbInput = Vector2.zero;

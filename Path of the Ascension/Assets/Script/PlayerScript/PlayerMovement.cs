@@ -21,14 +21,14 @@ public class PlayerMovement : MonoBehaviour
     public bool inClimbingState = false;
 
     private CharacterController characterController;
-    private PlayerInputHandler inputHandler;
+    private InputHandler inputHandler;
     private float horizontalInput;
     private Vector3 currentMovement;
     [SerializeField]private bool canRotate = true;
 
     private void Start() 
     {
-        inputHandler = PlayerInputHandler.Instance;
+        inputHandler = InputHandler.Instance;
         characterController = GetComponent<CharacterController>();
         inputHandler.OnJumpAction += HandleJump;
     }
