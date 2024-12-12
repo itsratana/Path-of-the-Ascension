@@ -394,6 +394,8 @@ MonoBehaviour:
   move: Move
   jump: Jump
   climb: Climb
+  sprint: Sprint
+  grab: Grab
 --- !u!4 &268801680
 Transform:
   m_ObjectHideFlags: 0
@@ -1168,11 +1170,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   walkSpeed: 5
+  sprintMultiplier: 1.5
   jumpForce: 5
   isClimbing: 0
   climbSpeed: 3
   inClimbingState: 0
-  canRotate: 1
 --- !u!143 &1946215635
 CharacterController:
   m_ObjectHideFlags: 0
@@ -1212,6 +1214,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pushForce: 3
+  inGrabingState: 0
 --- !u!1 &2037406243
 GameObject:
   m_ObjectHideFlags: 0
