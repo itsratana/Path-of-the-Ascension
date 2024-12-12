@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -17,12 +18,15 @@ public class InputHandler : MonoBehaviour
     [SerializeField] private string jump = "Jump";
     [SerializeField] private string climb = "Climb";
     [SerializeField] private string sprint = "Sprint";
+    [SerializeField] private string interact = "Interact";
     public event Action OnJumpAction;
+    public event Action OnInteractAction;
 
     private InputAction moveAction;
     private InputAction jumpAction;
     private InputAction climbAction;
     private InputAction sprintAction;
+    private InputAction interactAction;
 
     public Vector2 MoveInput { get; private set; }
     public Vector2 ClimbInput { get; private set; }
@@ -46,6 +50,7 @@ public class InputHandler : MonoBehaviour
         jumpAction = playerControl.FindActionMap(actionMapName).FindAction(jump);
         climbAction = playerControl.FindActionMap(actionMapName).FindAction(climb);
         sprintAction = playerControl.FindActionMap(actionMapName).FindAction(sprint);
+        interactAction = playerControl.FindActionMap(actionMapName).FindAction(interact);
         RegisterInputAction();
     }
 
@@ -54,7 +59,9 @@ public class InputHandler : MonoBehaviour
         moveAction.performed += context => MoveInput = context.ReadValue<Vector2>();
         moveAction.canceled += context => MoveInput = Vector2.zero;
 
-        jumpAction.performed += context => OnJumpAction?.Invoke();        
+        jumpAction.performed += context => OnJumpAction?.Invoke();
+
+        interactAction.performed += context => OnInteractAction?.Invoke();        
 
         climbAction.performed += context => ClimbInput = context.ReadValue<Vector2>();
         climbAction.canceled += context => ClimbInput = Vector2.zero;
@@ -69,6 +76,7 @@ public class InputHandler : MonoBehaviour
         jumpAction.Enable();
         climbAction.Enable();
         sprintAction.Enable();
+        interactAction.Enable();
     }
 
     private void OnDisable()
@@ -77,5 +85,6 @@ public class InputHandler : MonoBehaviour
         jumpAction.Disable();
         climbAction.Disable();
         sprintAction.Disable();
+        interactAction.Disable();
     }
 }
