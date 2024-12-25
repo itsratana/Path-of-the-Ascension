@@ -7,64 +7,58 @@ using Unity.VisualScripting;
 
 public class PushObject : MonoBehaviour
 {
-    private InputHandler inputHandler;
-    private PlayerMovement playerMovement;
-    public float pushForce = 3f;
-    public bool inGrabingState = false;
-    [SerializeField]private bool isGrabing = false;
+    public static PushObject Instance {get; private set;}
+    public Transform playerTransform;
+    public float pushPullSpeed = 3f;
+    private Vector3 offset;
+    private bool isInteracting = false;
 
     void Start()
     {
-        inputHandler = InputHandler.Instance;
-        playerMovement = PlayerMovement.Instance;
-        inputHandler.OnInteractAction += HandleInteract;
+        //InputHandler.Instance.OnInteractAction += HandlePushPull;
     }
-    void OnDisable()
+     void Update()
     {
-        inputHandler.OnInteractAction -= HandleInteract;
-    }
-
-    void HandleInteract()
-    {
-        if(inGrabingState)
+        if (GrabState.Instance.isGrabing && !isInteracting)
         {
-            isGrabing = !isGrabing;
-            playerMovement.canRotate = !playerMovement.canRotate;
+            StartInteraction();
         }
-    
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if(other.gameObject.layer == 7)
+        else if (!GrabState.Instance.isGrabing && isInteracting)
         {
-            inGrabingState = true;
+            StopInteraction();
+        }
+        if (isInteracting)
+        {
+            HandlePushPull();
         }
     }
-    private void OnTriggerExit(Collider other)
+
+    public void StartInteraction()
     {
-        if(other.gameObject.layer == 7)
-        {
-            isGrabing = false;
-            inGrabingState = false; 
-            playerMovement.canRotate = true;
-        }
+        // Begin interaction and calculate the offset
+        isInteracting = true;
+        offset = transform.position - playerTransform.position;
     }
-    private void OnControllerColliderHit(ControllerColliderHit hit)
+
+    public void StopInteraction()
     {
-        if(isGrabing)
-        {
-            Rigidbody rb = hit.collider.attachedRigidbody;
+        // End interaction
+        isInteracting = false;
+    }
 
-            if (rb == null || rb.isKinematic)
-                return;
+    private void HandlePushPull()
+    {
+        // Calculate the new position based on the player's position and offset
+        Vector3 targetPosition = playerTransform.position + offset;
 
-            if (hit.moveDirection.y < -0.3f)
-                return;
+        // Adjust the position based on player input
+        float horizontal = Input.GetAxis("Horizontal"); // Replace with custom input if needed
 
-            Vector3 pushDir = new Vector3(hit.moveDirection.x, 0, 0);
+        // Add movement in the forward/backward direction of the player
+        Vector3 direction = new Vector3(horizontal, 0, 0).normalized;
+        targetPosition += direction * pushPullSpeed * Time.deltaTime;
 
-            rb.velocity = pushDir * pushForce;
-        }
+        // Update the object's position
+        transform.position = targetPosition;
     }
 }
